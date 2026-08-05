@@ -1,0 +1,9 @@
+
+### SERVER CHECK
+GET http://localhost:{{port}}
+###
+
+
+### HEATH CHECK
+GET http://localhost:{{port}}/health
+###

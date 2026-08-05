@@ -1,0 +1,8 @@
+### LOGIN
+POST {{base_path}}{{port}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "borisaxel1998@gmail.com",
+  "password": "password"
+}

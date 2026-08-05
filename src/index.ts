@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import {env} from "./config/env.js";
 import {closeDb} from "./config/db.js";
+import authRoutes from "./features/auth/auth.routes.js";
 
 const app = new Hono()
 
@@ -12,6 +13,8 @@ app.get('/health', (c) => {
 app.get('/', (c) => {
   return c.text('Facturly Backend API');
 });
+
+app.route('/auth', authRoutes);
 
 serve({
   fetch: app.fetch,

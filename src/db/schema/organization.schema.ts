@@ -5,7 +5,6 @@ import { organizationStatusEnum } from './enums.schema.js';
 export const organization = pgTable('organization', {
     id: uuid('id').defaultRandom().primaryKey(),
     name: varchar('name', { length: 255 }).notNull(),
-    // Gate d'accès : PENDING/SUSPENDED/INACTIVE bloque tout pour les users rattachés
     status: organizationStatusEnum('status').notNull().default('PENDING'),
     email: varchar('email', { length: 255 }),
     phone: varchar('phone', { length: 50 }),

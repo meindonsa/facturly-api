@@ -16,7 +16,6 @@ export const invoice = pgTable('invoice', {
     // FCFA entier, pas de décimales
     totalAmount: integer('total_amount').notNull().default(0),
     issueDate: timestamp('issue_date', { withTimezone: true }).notNull().defaultNow(),
-    dueDate: timestamp('due_date', { withTimezone: true }),
     paidAt: timestamp('paid_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

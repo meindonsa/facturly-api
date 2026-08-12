@@ -5,6 +5,7 @@ type AccessTokenPayload = {
     userId: string;
     email: string;
     role: 'ADMIN' | 'USER';
+    refreshTokenId: string;
     organizationId?: string;
 };
 

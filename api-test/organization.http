@@ -1,0 +1,51 @@
+### CREATE
+POST {{base_path}}{{port}}/organizations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI2NDI4NTE2Zi1kYzU1LTRmYzgtYTgxMy1hOTRiMDlmNTY3NGUiLCJlbWFpbCI6ImJvcmlzYXhlbDE5OThAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwicmVmcmVzaFRva2VuSWQiOiJhM2FmNWM1Yi1mNDFkLTRjOGMtYjUzOS05ZTdkNjRlOTA1ZDYiLCJpYXQiOjE3ODY1NDY1NzYsImV4cCI6MTc4NjU0NzQ3Nn0.AMY7-PX4xxDqmRk8M_uVX02AwzjDVBM9JTcoFrKOKP8
+
+{
+  "name": "SPACE",
+  "email": "spacebo241@gmail.com",
+  "phone": "077909090",
+  "address": "CEYO"
+}
+
+### RETRIEVE
+GET {{base_path}}{{port}}/organizations/6b9450e7-b55e-4ed7-b740-70fd5ed3b121
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI2NDI4NTE2Zi1kYzU1LTRmYzgtYTgxMy1hOTRiMDlmNTY3NGUiLCJlbWFpbCI6ImJvcmlzYXhlbDE5OThAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwicmVmcmVzaFRva2VuSWQiOiJhM2FmNWM1Yi1mNDFkLTRjOGMtYjUzOS05ZTdkNjRlOTA1ZDYiLCJpYXQiOjE3ODY1NDY1NzYsImV4cCI6MTc4NjU0NzQ3Nn0.AMY7-PX4xxDqmRk8M_uVX02AwzjDVBM9JTcoFrKOKP8
+
+
+### UPDATE
+PATCH {{base_path}}{{port}}/organizations/6b9450e7-b55e-4ed7-b740-70fd5ed3b121/info
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI2NDI4NTE2Zi1kYzU1LTRmYzgtYTgxMy1hOTRiMDlmNTY3NGUiLCJlbWFpbCI6ImJvcmlzYXhlbDE5OThAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwicmVmcmVzaFRva2VuSWQiOiJhM2FmNWM1Yi1mNDFkLTRjOGMtYjUzOS05ZTdkNjRlOTA1ZDYiLCJpYXQiOjE3ODY1NDY1NzYsImV4cCI6MTc4NjU0NzQ3Nn0.AMY7-PX4xxDqmRk8M_uVX02AwzjDVBM9JTcoFrKOKP8
+
+{
+  "name": "SPACE",
+  "email": "spacebo241@gmail.com",
+  "phone": "077101010",
+  "address": "Chantier moderne / CEYO"
+}
+
+### STATUS
+PATCH {{base_path}}{{port}}/organizations/6b9450e7-b55e-4ed7-b740-70fd5ed3b121/status
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI2NDI4NTE2Zi1kYzU1LTRmYzgtYTgxMy1hOTRiMDlmNTY3NGUiLCJlbWFpbCI6ImJvcmlzYXhlbDE5OThAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwicmVmcmVzaFRva2VuSWQiOiJhM2FmNWM1Yi1mNDFkLTRjOGMtYjUzOS05ZTdkNjRlOTA1ZDYiLCJpYXQiOjE3ODY1NDY1NzYsImV4cCI6MTc4NjU0NzQ3Nn0.AMY7-PX4xxDqmRk8M_uVX02AwzjDVBM9JTcoFrKOKP8
+
+{
+  "status": "SUSPENDED"
+}
+
+### LOGO
+PATCH {{base_path}}{{port}}/organizations/6b9450e7-b55e-4ed7-b740-70fd5ed3b121/logo
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI2NDI4NTE2Zi1kYzU1LTRmYzgtYTgxMy1hOTRiMDlmNTY3NGUiLCJlbWFpbCI6ImJvcmlzYXhlbDE5OThAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwicmVmcmVzaFRva2VuSWQiOiJhM2FmNWM1Yi1mNDFkLTRjOGMtYjUzOS05ZTdkNjRlOTA1ZDYiLCJpYXQiOjE3ODY1NDY1NzYsImV4cCI6MTc4NjU0NzQ3Nn0.AMY7-PX4xxDqmRk8M_uVX02AwzjDVBM9JTcoFrKOKP8
+
+{
+  "logoUrl": "https://facturly-webapp.vercel.app/logo.png"
+}
+
+### RETRIEVE APP
+PATCH {{base_path}}{{port}}/organizations?search=space&page=1&limit=20"
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI2NDI4NTE2Zi1kYzU1LTRmYzgtYTgxMy1hOTRiMDlmNTY3NGUiLCJlbWFpbCI6ImJvcmlzYXhlbDE5OThAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwicmVmcmVzaFRva2VuSWQiOiJhM2FmNWM1Yi1mNDFkLTRjOGMtYjUzOS05ZTdkNjRlOTA1ZDYiLCJpYXQiOjE3ODY1NDY1NzYsImV4cCI6MTc4NjU0NzQ3Nn0.AMY7-PX4xxDqmRk8M_uVX02AwzjDVBM9JTcoFrKOKP8

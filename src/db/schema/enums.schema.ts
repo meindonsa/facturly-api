@@ -13,9 +13,7 @@ export const organizationStatusEnum = pgEnum('organization_status', [
 
 export const invoiceStatusEnum = pgEnum('invoice_status', [
     'DRAFT',
-    'SENT',
     'PAID',
-    'OVERDUE',
     'CANCELLED',
 ]);
 

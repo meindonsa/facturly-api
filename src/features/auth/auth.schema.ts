@@ -1,14 +1,25 @@
 import { z } from 'zod';
 
-export const registerSchema = z.object({
+// Register ADMIN : pas d'organisation
+export const registerAdminSchema = z.object({
     email: z.email('Email invalide'),
     password: z.string().min(8, 'Le mot de passe doit faire au moins 8 caractères'),
     firstName: z.string().min(1, 'Le prénom est requis'),
     lastName: z.string().min(1, 'Le nom est requis'),
-    organizationId: z.uuid('ID d\'organisation invalide').optional(),
 });
 
-export type RegisterRequest = z.infer<typeof registerSchema>;
+export type RegisterAdminRequest = z.infer<typeof registerAdminSchema>;
+
+// Register USER : organisationId obligatoire
+export const registerUserSchema = z.object({
+    email: z.email('Email invalide'),
+    password: z.string().min(8, 'Le mot de passe doit faire au moins 8 caractères'),
+    firstName: z.string().min(1, 'Le prénom est requis'),
+    lastName: z.string().min(1, 'Le nom est requis'),
+    organizationId: z.uuid('ID d\'organisation invalide'),
+});
+
+export type RegisterUserRequest = z.infer<typeof registerUserSchema>;
 
 export const registerResponseSchema = z.object({
     id: z.uuid(),

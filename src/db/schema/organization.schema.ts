@@ -8,6 +8,7 @@ export const organization = pgTable('organization', {
     status: organizationStatusEnum('status').notNull().default('PENDING'),
     email: varchar('email', { length: 255 }),
     phone: varchar('phone', { length: 50 }),
+    logoUrl: varchar('logo_url', { length: 500 }),
     address: varchar('address', { length: 500 }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

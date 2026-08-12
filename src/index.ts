@@ -3,6 +3,7 @@ import { Hono } from 'hono'
 import {env} from "./config/env.js";
 import {closeDb} from "./config/db.js";
 import authRoutes from "./features/auth/auth.routes.js";
+import organizationRoutes from "./features/organizations/organization.routes.js";
 
 const app = new Hono()
 
@@ -15,6 +16,7 @@ app.get('/', (c) => {
 });
 
 app.route('/auth', authRoutes);
+app.route('/organizations', organizationRoutes);
 
 serve({
   fetch: app.fetch,

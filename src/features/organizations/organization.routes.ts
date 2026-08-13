@@ -141,6 +141,10 @@ organizationRoutes.get(
     zValidator('query', listOrganizationsQuerySchema),
     async (c) => {
         try {
+            const auth = c.get('auth');
+            if (auth.role !== "ADMIN") {
+                return sendError(c, 'FORBIDDEN', "Seuls les administrateurs peuvent effectuer cette action", 403);
+            }
             const { page, limit, search } = c.req.valid('query');
             const { data, total } = await OrganizationService.listOrganizations(page, limit, search);
 

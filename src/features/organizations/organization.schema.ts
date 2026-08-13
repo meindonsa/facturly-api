@@ -46,9 +46,9 @@ export type OrganizationResponse = z.infer<typeof organizationResponseSchema>;
 
 // Query parameters pour la liste
 export const listOrganizationsQuerySchema = z.object({
-    page: z.coerce.number().int().positive().default(1),
-    limit: z.coerce.number().int().positive().max(100).default(10),
-    search: z.string().optional(), // Recherche par nom ou email
+    page: z.coerce.number().default(1).pipe(z.number().int().positive()),
+    limit: z.coerce.number().default(10).pipe(z.number().int().positive().max(100)),
+    search: z.string().optional(),
 });
 
 export type ListOrganizationsQuery = z.infer<typeof listOrganizationsQuerySchema>;

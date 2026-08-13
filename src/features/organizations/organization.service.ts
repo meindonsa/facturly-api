@@ -1,4 +1,4 @@
-import { eq, like, ilike, count } from 'drizzle-orm';
+import { eq, or, ilike, count } from 'drizzle-orm';
 import { db, } from '../../config/db.js';
 import { organization } from '../../db/schema/index.js';
 import type {
@@ -113,39 +113,30 @@ export class OrganizationService {
         };
     }
 
-    static async listOrganizations(
-        page: number,
-        limit: number,
-        search?: string
-    ): Promise<{ data: OrganizationResponse[]; total: number }> {
-        let query = db.select().from(organization);
+    static async listOrganizations(page: number, limit: number, search?: string): Promise<{ data: OrganizationResponse[]; total: number }> {
+        const whereCondition = search
+            ? or(
+                ilike(organization.name, `%${search}%`),
+                ilike(organization.email, `%${search}%`)
+            )
+            : undefined;
 
-        // Recherche par nom ou email
-        if (search) {
-            query = query.where(
-                db.or(
-                    ilike(organization.name, `%${search}%`),
-                    ilike(organization.email, `%${search}%`)
-                )
-            );
-        }
-
-        // Récupérer le total pour la pagination
+        // Récupérer le total
         const totalResult = await db
             .select({ count: count() })
             .from(organization)
-            .where(search ?
-                db.or(
-                    ilike(organization.name, `%${search}%`),
-                    ilike(organization.email, `%${search}%`)
-                )
-                : undefined
-            );
+            .where(whereCondition);
 
         const total = totalResult[0]?.count || 0;
 
+        // Appliquer pagination
         const offset = (page - 1) * limit;
-        const orgs = await query.limit(limit).offset(offset);
+        const orgs = await db
+            .select()
+            .from(organization)
+            .where(whereCondition)
+            .limit(limit)
+            .offset(offset);
 
         return {
             data: orgs.map((org) => this.mapToResponse(org)),

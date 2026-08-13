@@ -1,0 +1,23 @@
+### GET request to example server
+POST {{base_path}}{{port}}/invoices
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI2NDI4NTE2Zi1kYzU1LTRmYzgtYTgxMy1hOTRiMDlmNTY3NGUiLCJlbWFpbCI6ImJvcmlzYXhlbDE5OThAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwicmVmcmVzaFRva2VuSWQiOiIxZThjODA3YS05YjFjLTRmZWEtOTI5My03YTY3ZmQ4ZGJhYWUiLCJpYXQiOjE3ODY2MjE4MjUsImV4cCI6MTc4NjYyMjcyNX0.vbBrGQD00MRnRLP6eNUfzBXkVCVpCcWdmZgJ6WFZzOo
+
+{
+  "organizationId": "{{orgId}}",
+  "clientName": "Client ABC",
+  "clientEmail": "client@example.com",
+  "clientAddress": "Douala, Cameroon",
+  "items": [
+    {
+      "description": "Service de facturation",
+      "quantity": 1,
+      "unitPrice": 50000
+    },
+    {
+      "description": "Support technique",
+      "quantity": 2,
+      "unitPrice": 25000
+    }
+  ]
+}

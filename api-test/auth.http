@@ -3,7 +3,7 @@ POST {{base_path}}{{port}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "borisaxel1998@gmail.com",
+  "email": "{{user}}",
   "password": "Password@1"
 }
 
@@ -16,7 +16,7 @@ Content-Type: application/json
   "password": "Password@1",
   "firstName": "Johan",
   "lastName": "Boris",
-  "organizationId": ""
+  "organizationId": "{{orgId}}"
 }
 
 ### REFISTER ADMIN
@@ -35,10 +35,10 @@ POST {{base_path}}{{port}}/auth/refresh
 Content-Type: application/json
 
 {
-  "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI2NDI4NTE2Zi1kYzU1LTRmYzgtYTgxMy1hOTRiMDlmNTY3NGUiLCJyZWZyZXNoVG9rZW5JZCI6ImEzYWY1YzViLWY0MWQtNGM4Yy1iNTM5LTllN2Q2NGU5MDVkNiIsImlhdCI6MTc4NjU0NjU3NSwiZXhwIjoxNzg5MTM4NTc1fQ.elsNKDSw_JU14Ki2ML56Q_4P8KKRrGWJOxTlnVJr3m8"
+  "refreshToken": {{refresh_token}}
 }
 
 ### LOGOUT
 POST {{base_path}}{{port}}/auth/logout
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiI2NDI4NTE2Zi1kYzU1LTRmYzgtYTgxMy1hOTRiMDlmNTY3NGUiLCJlbWFpbCI6ImJvcmlzYXhlbDE5OThAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwicmVmcmVzaFRva2VuSWQiOiIxZThjODA3YS05YjFjLTRmZWEtOTI5My03YTY3ZmQ4ZGJhYWUiLCJpYXQiOjE3ODY2MjE4MjUsImV4cCI6MTc4NjYyMjcyNX0.vbBrGQD00MRnRLP6eNUfzBXkVCVpCcWdmZgJ6WFZzOo
+Authorization: Bearer {{access_token}}

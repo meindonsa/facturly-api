@@ -211,4 +211,92 @@ export class InvoiceService {
             updatedAt: inv.updatedAt,
         };
     }
+
+    static async markAsPaid(invoiceId: string): Promise<InvoiceResponse> {
+        // Récupérer la facture
+        const invoices = await db
+            .select()
+            .from(invoice)
+            .where(eq(invoice.id, invoiceId))
+            .limit(1);
+
+        if (invoices.length === 0) {
+            throw new Error('La facture n\'existe pas');
+        }
+
+        const inv = invoices[0];
+
+        // Vérifier que ce n'est pas déjà payée
+        if (inv.status === 'PAID') {
+            throw new Error('Cette facture est déjà payée');
+        }
+
+        // Vérifier que ce n'est pas annulée
+        if (inv.status === 'CANCELLED') {
+            throw new Error('Une facture annulée ne peut pas être payée');
+        }
+
+        // Mettre à jour le statut et la date de paiement
+        const updated = await db
+            .update(invoice)
+            .set({
+                status: 'PAID' as any,
+                paidAt: new Date(),
+                updatedAt: new Date(),
+            })
+            .where(eq(invoice.id, invoiceId))
+            .returning();
+
+        // Récupérer les items
+        const items = await db
+            .select()
+            .from(invoiceItem)
+            .where(eq(invoiceItem.invoiceId, invoiceId));
+
+        return this.mapToResponse(updated[0], items);
+    }
+
+    // Annuler une facture
+    static async cancel(invoiceId: string): Promise<InvoiceResponse> {
+        // Récupérer la facture
+        const invoices = await db
+            .select()
+            .from(invoice)
+            .where(eq(invoice.id, invoiceId))
+            .limit(1);
+
+        if (invoices.length === 0) {
+            throw new Error('La facture n\'existe pas');
+        }
+
+        const inv = invoices[0];
+
+        // Vérifier que ce n'est pas déjà payée
+        if (inv.status === 'PAID') {
+            throw new Error('Une facture payée ne peut pas être annulée');
+        }
+
+        // Vérifier que ce n'est pas déjà annulée
+        if (inv.status === 'CANCELLED') {
+            throw new Error('Cette facture est déjà annulée');
+        }
+
+        // Mettre à jour le statut
+        const updated = await db
+            .update(invoice)
+            .set({
+                status: 'CANCELLED' as any,
+                updatedAt: new Date(),
+            })
+            .where(eq(invoice.id, invoiceId))
+            .returning();
+
+        // Récupérer les items
+        const items = await db
+            .select()
+            .from(invoiceItem)
+            .where(eq(invoiceItem.invoiceId, invoiceId));
+
+        return this.mapToResponse(updated[0], items);
+    }
 }

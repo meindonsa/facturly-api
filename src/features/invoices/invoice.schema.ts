@@ -80,3 +80,18 @@ export const updateInvoiceSchema = z.object({
 });
 
 export type UpdateInvoiceRequest = z.infer<typeof updateInvoiceSchema>;
+
+
+// Marquer comme payée
+export const markInvoiceAsPaidSchema = z.object({
+    // Vide, juste pour confirmer l'action
+});
+
+export type MarkInvoiceAsPaidRequest = z.infer<typeof markInvoiceAsPaidSchema>;
+
+// Annuler une facture
+export const cancelInvoiceSchema = z.object({
+    // Vide, juste pour confirmer l'action
+});
+
+export type CancelInvoiceRequest = z.infer<typeof cancelInvoiceSchema>;

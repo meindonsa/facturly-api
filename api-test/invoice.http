@@ -51,3 +51,13 @@ Authorization: Bearer {{access_token}}
   ],
   "deleteItemIds": ["e09f346b-fc5d-4268-b1b3-22a0529c54cb"]
 }
+
+
+### Marquer comme payée
+PATCH {{base_path}}{{port}}/invoices/paid/{{invoiceId}}
+Authorization: Bearer {{access_token}}
+
+
+### Annuler
+PATCH {{base_path}}{{port}}/invoices/cancel/{{invoiceId}}
+Authorization: Bearer {{access_token}}

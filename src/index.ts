@@ -5,6 +5,7 @@ import {closeDb} from "./config/db.js";
 import authRoutes from "./features/auth/auth.routes.js";
 import organizationRoutes from "./features/organizations/organization.routes.js";
 import invoiceRoutes from "./features/invoices/invoice.routes.js";
+import subscriptionRoutes from "./features/subscriptions/subscription.routes.js";
 
 const app = new Hono()
 
@@ -18,6 +19,7 @@ app.get('/', (c) => {
 
 app.route('/auth', authRoutes);
 app.route('/invoices', invoiceRoutes);
+app.route('/subscriptions', subscriptionRoutes);
 app.route('/organizations', organizationRoutes);
 
 serve({

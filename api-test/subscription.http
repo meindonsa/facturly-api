@@ -1,0 +1,23 @@
+### Créer un abonnement
+POST {{base_path}}{{port}}/subscriptions
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "organizationId": "{{orgId}}",
+  "userId": "{{userId}}",
+  "amount": 50000,
+  "currency": "XAF"
+}
+
+### Récupérer l'abonnement actif
+GET {{base_path}}{{port}}/subscriptions/active/{{orgId}}
+Authorization: Bearer {{access_token}}
+
+### Récupérer tous les abonnements (admin)
+GET {{base_path}}{{port}}/subscriptions
+Authorization: Bearer {{access_token}}
+
+### Avec filtres
+GET {{base_path}}{{port}}/subscriptions?organizationId={{orgId}}&isActive=true&page=1&limit=20
+Authorization: Bearer {{access_token}}

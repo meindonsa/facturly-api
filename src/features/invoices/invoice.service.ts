@@ -16,7 +16,7 @@ export class InvoiceService {
 
     // Créer une nouvelle facture avec ses items
     static async createInvoice(req: CreateInvoiceRequest): Promise<InvoiceResponse> {
-        const { organizationId, clientName, clientEmail, clientAddress, items } = req;
+        const { organizationId, clientName, clientEmail, clientPhone, deliveryAmount, clientAddress, items } = req;
 
         // Vérifier que l'organisation existe
         const orgs = await db
@@ -35,7 +35,9 @@ export class InvoiceService {
         }
 
         // Calculer le montant total
-        const totalAmount = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+        const totalProduct = items.reduce((sum, item) => sum + item.quantity, 0); // Nombre total d'items
+        const totalProductAmount = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0); // Montant total des produits
+        const totalAmount = totalProductAmount + deliveryAmount;
 
         // Générer le numéro de facture
         const invoiceNumber = this.generateInvoiceNumber();
@@ -48,8 +50,12 @@ export class InvoiceService {
                 number: invoiceNumber,
                 status: 'DRAFT',
                 clientName,
+                clientPhone: clientPhone || null,
                 clientEmail: clientEmail || null,
                 clientAddress: clientAddress || null,
+                totalProduct,
+                totalProductAmount,
+                deliveryAmount,
                 totalAmount,
                 issueDate: new Date(),
             })
@@ -82,8 +88,12 @@ export class InvoiceService {
             number: inv.number,
             status: inv.status,
             clientName: inv.clientName,
+            clientPhone: inv.clientPhone,
             clientEmail: inv.clientEmail,
             clientAddress: inv.clientAddress,
+            totalProduct: inv.totalProduct, // ✅ Ajouter
+            totalProductAmount: inv.totalProductAmount, // ✅ Ajouter
+            deliveryAmount: inv.deliveryAmount, // ✅ Ajouter
             totalAmount: inv.totalAmount,
             issueDate: inv.issueDate,
             paidAt: inv.paidAt,

@@ -14,6 +14,8 @@ export const createInvoiceSchema = z.object({
     organizationId: z.uuid('ID d\'organisation invalide'),
     clientName: z.string().min(1, 'Le nom du client est requis'),
     clientEmail: z.email('Email invalide').optional(),
+    deliveryAmount: z.number().int().nonnegative('Les frais de livraison doivent être positifs').default(0), // ✅ Ajouter
+    clientPhone: z.string().optional(),
     clientAddress: z.string().optional(),
     items: z.array(createInvoiceItemSchema).min(1, 'Au moins un item est requis'),
 });
@@ -40,8 +42,12 @@ export const invoiceResponseSchema = z.object({
     number: z.string(),
     status: z.enum(['DRAFT', 'SENT', 'PAID', 'OVERDUE', 'CANCELLED']),
     clientName: z.string(),
-    clientEmail: z.string().email().nullable(),
+    clientEmail: z.email().nullable(),
     clientAddress: z.string().nullable(),
+    clientPhone: z.string().nullable(),
+    totalProduct: z.number(), // ✅ Ajouter
+    totalProductAmount: z.number(), // ✅ Ajouter
+    deliveryAmount: z.number(), // ✅ Ajouter
     totalAmount: z.number(),
     issueDate: z.date(),
     paidAt: z.date().nullable(),

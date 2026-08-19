@@ -3,7 +3,7 @@ POST {{base_path}}{{port}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "{{user}}",
+  "email": "{{admin}}",
   "password": "Password@1"
 }
 

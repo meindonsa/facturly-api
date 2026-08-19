@@ -8,6 +8,8 @@ Authorization: Bearer {{access_token}}
   "clientName": "Client ABC",
   "clientEmail": "client@example.com",
   "clientAddress": "Douala, Cameroon",
+  "clientPhone": "074032387",
+  "deliveryAmount": 1500,
   "items": [
     {
       "description": "Service de facturation",

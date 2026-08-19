@@ -11,9 +11,13 @@ export const invoice = pgTable('invoice', {
     number: varchar('number', { length: 50 }).notNull().unique(),
     status: invoiceStatusEnum('status').notNull().default('DRAFT'),
     clientName: varchar('client_name', { length: 255 }).notNull(),
+    clientPhone: varchar('client_phone', { length: 255 }),
     clientEmail: varchar('client_email', { length: 255 }),
     clientAddress: varchar('client_address', { length: 500 }),
     // FCFA entier, pas de décimales
+    deliveryAmount: integer('delivery_amount').notNull().default(0),
+    totalProduct: integer('total_product').notNull().default(0),
+    totalProductAmount: integer('total_product_amount').notNull().default(0),
     totalAmount: integer('total_amount').notNull().default(0),
     issueDate: timestamp('issue_date', { withTimezone: true }).notNull().defaultNow(),
     paidAt: timestamp('paid_at', { withTimezone: true }),

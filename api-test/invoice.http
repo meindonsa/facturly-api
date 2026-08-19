@@ -23,3 +23,31 @@ Authorization: Bearer {{access_token}}
     }
   ]
 }
+
+
+### GET request to example server
+PATCH {{base_path}}{{port}}/invoices/{{invoiceId}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "clientName": "Client ABC UPDATED",
+  "clientEmail": "client@example.com",
+  "clientAddress": "Douala, Cameroon Updated",
+  "clientPhone": "074032387",
+  "deliveryAmount": 1500,
+  "items": [
+    {
+      "id": "d55ea1df-fa50-4889-a3b6-c1bef541f2cc",
+      "description": "Service de facturation modifié",
+      "quantity": 2,
+      "unitPrice": 40000
+    },
+    {
+      "description": "Nouvel item",
+      "quantity": 1,
+      "unitPrice": 15000
+    }
+  ],
+  "deleteItemIds": ["e09f346b-fc5d-4268-b1b3-22a0529c54cb"]
+}

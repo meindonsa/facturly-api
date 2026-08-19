@@ -77,3 +77,6 @@ Authorization: Bearer {{access_token}}
 ### Récupérer une seule invoice
 GET {{base_path}}{{port}}/invoices/{{invoiceId}}
 Authorization: Bearer {{access_token}}
+
+DELETE {{base_path}}{{port}}/invoices/delete/{{invoiceId}}
+Authorization: Bearer {{access_token}}

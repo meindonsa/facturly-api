@@ -2,8 +2,11 @@ import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { authGuard } from '../../shared/middlewares/auth-guard.js';
 import { InvoiceService } from './invoice.service.js';
-import { createInvoiceSchema } from './invoice.schema.js';
+import {createInvoiceSchema, updateInvoiceSchema} from './invoice.schema.js';
 import { sendSuccess, sendError } from '../../shared/utils/response.js';
+import {db} from "../../config/db.js";
+import {invoice} from "../../db/schema/index.js";
+import {eq} from "drizzle-orm";
 
 const invoiceRoutes = new Hono<{ Variables: { auth: any } }>();
 
@@ -31,4 +34,39 @@ invoiceRoutes.post(
     }
 );
 
+// PATCH /invoices/:id - Mettre à jour une facture
+invoiceRoutes.patch(
+    '/:id',
+    authGuard,
+    zValidator('json', updateInvoiceSchema),
+    async (c) => {
+        try {
+            const auth = c.get('auth');
+            const invoiceId = c.req.param('id');
+            const payload = c.req.valid('json');
+
+            // Récupérer la facture pour vérifier l'accès
+            const inv = await db
+                .select()
+                .from(invoice)
+                .where(eq(invoice.id, invoiceId))
+                .limit(1);
+
+            if (inv.length === 0) {
+                return sendError(c, 'NOT_FOUND', 'La facture n\'existe pas', 404);
+            }
+
+            // Vérifier que l'user appartient à l'organisation (sauf si admin)
+            if (auth.role !== 'USER' || auth.organizationId !== inv[0].organizationId) {
+                return sendError(c, 'FORBIDDEN', 'Vous n\'avez pas accès à cette facture', 403);
+            }
+
+            const updated = await InvoiceService.updateInvoice(invoiceId, payload);
+            return sendSuccess(c, updated, 200);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Erreur lors de la mise à jour';
+            return sendError(c, 'UPDATE_INVOICE_FAILED', message, 400);
+        }
+    }
+);
 export default invoiceRoutes;

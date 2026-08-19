@@ -57,3 +57,26 @@ export const invoiceResponseSchema = z.object({
 });
 
 export type InvoiceResponse = z.infer<typeof invoiceResponseSchema>;
+
+// Mettre à jour un item (avec ou sans ID)
+export const updateInvoiceItemSchema = z.object({
+    id: z.uuid().optional(), // Si présent = mise à jour, sinon = création
+    description: z.string().min(1, 'La description est requise'),
+    quantity: z.number().int().positive('La quantité doit être positive'),
+    unitPrice: z.number().int().nonnegative('Le prix unitaire doit être positif'),
+});
+
+export type UpdateInvoiceItemRequest = z.infer<typeof updateInvoiceItemSchema>;
+
+// Mettre à jour une facture (items + montant livraison)
+export const updateInvoiceSchema = z.object({
+    clientName: z.string().min(1, 'Le nom du client est requis').optional(),
+    clientEmail: z.email('Email invalide').optional(),
+    clientPhone: z.string().optional(),
+    clientAddress: z.string().optional(),
+    deliveryAmount: z.number().int().nonnegative('Les frais de livraison doivent être positifs').optional(),
+    items: z.array(updateInvoiceItemSchema).min(1, 'Au moins un item est requis'),
+    deleteItemIds: z.array(z.uuid()).optional().default([]), // IDs des items à supprimer
+});
+
+export type UpdateInvoiceRequest = z.infer<typeof updateInvoiceSchema>;

@@ -95,3 +95,28 @@ export const cancelInvoiceSchema = z.object({
 });
 
 export type CancelInvoiceRequest = z.infer<typeof cancelInvoiceSchema>;
+
+
+// Query parameters pour la liste
+export const listInvoicesQuerySchema = z.object({
+    page: z.coerce.number().default(1).pipe(z.number().int().positive()),
+    limit: z.coerce.number().default(10).pipe(z.number().int().positive().max(100)),
+    search: z.string().optional(), // Recherche par numéro ou nom client
+    status: z.enum(['DRAFT', 'SENT', 'PAID', 'OVERDUE', 'CANCELLED']).optional(), // Filtrer par statut
+    organizationId: z.uuid().optional(), // Pour les admins (récupérer les invoices d'une org spécifique)
+});
+
+export type ListInvoicesQuery = z.infer<typeof listInvoicesQuerySchema>;
+
+// Réponse paginée
+export const paginatedInvoicesSchema = z.object({
+    data: z.array(invoiceResponseSchema),
+    pagination: z.object({
+        page: z.number(),
+        limit: z.number(),
+        total: z.number(),
+        totalPages: z.number(),
+    }),
+});
+
+export type PaginatedInvoicesResponse = z.infer<typeof paginatedInvoicesSchema>;

@@ -1,4 +1,4 @@
-import {eq, inArray} from 'drizzle-orm';
+import {and, count, eq, ilike, inArray, or} from 'drizzle-orm';
 import { db } from '../../config/db.js';
 import { invoice, invoiceItem, organization } from '../../db/schema/index.js';
 import type {CreateInvoiceRequest, InvoiceResponse, UpdateInvoiceRequest} from './invoice.schema.js';
@@ -298,5 +298,94 @@ export class InvoiceService {
             .where(eq(invoiceItem.invoiceId, invoiceId));
 
         return this.mapToResponse(updated[0], items);
+    }
+
+    // Récupérer une facture par ID
+    static async getInvoice(invoiceId: string): Promise<InvoiceResponse | null> {
+        const invoices = await db
+            .select()
+            .from(invoice)
+            .where(eq(invoice.id, invoiceId))
+            .limit(1);
+
+        if (invoices.length === 0) {
+            return null;
+        }
+
+        const items = await db
+            .select()
+            .from(invoiceItem)
+            .where(eq(invoiceItem.invoiceId, invoiceId));
+
+        return this.mapToResponse(invoices[0], items);
+    }
+
+    static async listInvoices(
+        page: number,
+        limit: number,
+        organizationId: string | null, // null pour admin sans filtre org
+        search?: string,
+        status?: string,
+        filterOrgId?: string // Pour les admins qui filtrent une org spécifique
+    ): Promise<{ data: InvoiceResponse[]; total: number }> {
+        // Construire les conditions WHERE
+        const conditions: any[] = [];
+
+        // Filtrer par organisation (sauf pour les admins sans restriction)
+        if (organizationId) {
+            // C'est un USER, filtrer par son organisation
+            conditions.push(eq(invoice.organizationId, organizationId));
+        } else if (filterOrgId) {
+            // C'est un ADMIN qui demande les invoices d'une org spécifique
+            conditions.push(eq(invoice.organizationId, filterOrgId));
+        }
+        // Sinon c'est un ADMIN sans filtre d'org, on retourne tous les invoices
+
+        // Recherche par numéro ou nom client
+        if (search) {
+            conditions.push(
+                or(
+                    ilike(invoice.number, `%${search}%`),
+                    ilike(invoice.clientName, `%${search}%`)
+                )
+            );
+        }
+
+        // Filtrer par statut
+        if (status) {
+            conditions.push(eq(invoice.status, status as any));
+        }
+
+        const whereCondition = conditions.length > 0 ? and(...conditions) : undefined;
+
+        // Récupérer le total
+        const totalResult = await db
+            .select({ count: count() })
+            .from(invoice)
+            .where(whereCondition);
+
+        const total = totalResult[0]?.count || 0;
+
+        // Appliquer pagination
+        const offset = (page - 1) * limit;
+        const invoices = await db
+            .select()
+            .from(invoice)
+            .where(whereCondition)
+            .orderBy(invoice.createdAt) // Ordre par date de création
+            .limit(limit)
+            .offset(offset);
+
+        // Récupérer les items pour chaque facture
+        const data: InvoiceResponse[] = [];
+        for (const inv of invoices) {
+            const items = await db
+                .select()
+                .from(invoiceItem)
+                .where(eq(invoiceItem.invoiceId, inv.id));
+            data.push(this.mapToResponse(inv, items));
+        }
+
+        return { data, total };
     }
 }

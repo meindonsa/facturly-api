@@ -61,3 +61,19 @@ Authorization: Bearer {{access_token}}
 ### Annuler
 PATCH {{base_path}}{{port}}/invoices/cancel/{{invoiceId}}
 Authorization: Bearer {{access_token}}
+
+### Récupérer toutes les invoices
+GET {{base_path}}{{port}}/invoices
+Authorization: Bearer {{access_token}}
+
+### Avec filtres
+GET {{base_path}}{{port}}/invoices?page=1&limit=20&search=FAC&status=DRAFT
+Authorization: Bearer {{access_token}}
+
+### Admin récupérant les invoices d'une org spécifique
+GET {{base_path}}{{port}}/invoices?organizationId={{orgId}}
+Authorization: Bearer {{access_token}}
+
+### Récupérer une seule invoice
+GET {{base_path}}{{port}}/invoices/{{invoiceId}}
+Authorization: Bearer {{access_token}}

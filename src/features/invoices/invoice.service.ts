@@ -388,4 +388,35 @@ export class InvoiceService {
 
         return { data, total };
     }
+
+    // Supprimer une facture (seulement DRAFT ou CANCELLED)
+    static async deleteInvoice(invoiceId: string): Promise<void> {
+        // Récupérer la facture
+        const invoices = await db
+            .select()
+            .from(invoice)
+            .where(eq(invoice.id, invoiceId))
+            .limit(1);
+
+        if (invoices.length === 0) {
+            throw new Error('La facture n\'existe pas');
+        }
+
+        const inv = invoices[0];
+
+        // Vérifier que le statut permet la suppression
+        if (inv.status !== 'DRAFT' && inv.status !== 'CANCELLED') {
+            throw new Error('Seules les factures en DRAFT ou CANCELLED peuvent être supprimées');
+        }
+
+        // Supprimer d'abord les items (cascade via DB mais on le fait explicitement)
+        await db
+            .delete(invoiceItem)
+            .where(eq(invoiceItem.invoiceId, invoiceId));
+
+        // Supprimer la facture
+        await db
+            .delete(invoice)
+            .where(eq(invoice.id, invoiceId));
+    }
 }

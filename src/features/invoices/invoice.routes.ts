@@ -218,4 +218,41 @@ invoiceRoutes.get(
     }
 );
 
+invoiceRoutes.delete(
+    '/delete/:id',
+    authGuard,
+    async (c) => {
+        try {
+            const auth = c.get('auth');
+            const invoiceId = c.req.param('id');
+
+            if (!invoiceId) {
+                return sendError(c, 'INVALID_ID', 'ID de facture invalide', 400);
+            }
+
+            // Récupérer la facture pour vérifier l'accès
+            const invoices = await db
+                .select()
+                .from(invoice)
+                .where(eq(invoice.id, invoiceId))
+                .limit(1);
+
+            if (invoices.length === 0) {
+                return sendError(c, 'NOT_FOUND', 'La facture n\'existe pas', 404);
+            }
+
+            // Vérifier que l'user appartient à l'organisation (sauf si admin)
+            if (auth.role !== 'USER' || auth.organizationId !== invoices[0].organizationId) {
+                return sendError(c, 'FORBIDDEN', 'Vous n\'avez pas accès à cette facture', 403);
+            }
+
+            await InvoiceService.deleteInvoice(invoiceId);
+            return sendSuccess(c, { message: 'La facture a été supprimée avec succès' }, 200);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Erreur lors de la suppression';
+            return sendError(c, 'DELETE_INVOICE_FAILED', message, 400);
+        }
+    }
+);
+
 export default invoiceRoutes;

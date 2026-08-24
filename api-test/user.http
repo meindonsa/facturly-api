@@ -1,0 +1,23 @@
+### Créer un admin
+POST {{base_path}}{{port}}/users/admin
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "email": "newadmin@facturly.com",
+  "password": "SecurePassword123",
+  "firstName": "Jane",
+  "lastName": "Smith"
+}
+
+### Récupérer les users
+GET {{base_path}}{{port}}/users?page=1&limit=20
+Authorization: Bearer {{access_token}}
+
+### Désactiver un user
+PATCH {{base_path}}{{port}}/users/deactivate/{{userId}}
+Authorization: Bearer {{access_token}}
+
+### Supprimer un user
+DELETE {{base_path}}{{port}}/users/{{userId}}
+Authorization: Bearer {{access_token}}

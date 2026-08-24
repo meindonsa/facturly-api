@@ -1,0 +1,7 @@
+### Récupérer les logs
+GET {{base_path}}{{port}}/logs?page=1&limit=50
+Authorization: Bearer {{access_token}}
+
+### Avec filtres
+GET {{base_path}}{{port}}/logs?level=ERROR&action=CREATE_INVOICE&organizationId={{orgId}}
+Authorization: Bearer {{access_token}}

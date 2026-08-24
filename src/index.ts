@@ -6,6 +6,10 @@ import authRoutes from "./features/auth/auth.routes.js";
 import organizationRoutes from "./features/organizations/organization.routes.js";
 import invoiceRoutes from "./features/invoices/invoice.routes.js";
 import subscriptionRoutes from "./features/subscriptions/subscription.routes.js";
+import userRoutes from "./features/users/user.routes.js";
+import logRoutes from "./features/logs/log.routes.js";
+import {loggingMiddleware} from "./shared/middlewares/logging-middleware.js";
+import {errorHandler} from "./shared/middlewares/error-handler.js";
 
 const app = new Hono()
 
@@ -17,7 +21,13 @@ app.get('/', (c) => {
   return c.text('Facturly Backend API');
 });
 
+// Middlewares globaux
+app.use('*', errorHandler);
+app.use('*', loggingMiddleware); // ✅ Ajouter ici
+
+app.route('/logs', logRoutes);
 app.route('/auth', authRoutes);
+app.route('/users', userRoutes);
 app.route('/invoices', invoiceRoutes);
 app.route('/subscriptions', subscriptionRoutes);
 app.route('/organizations', organizationRoutes);

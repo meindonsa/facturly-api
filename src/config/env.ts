@@ -14,6 +14,7 @@ const envSchema = z.object({
     JWT_REFRESH_SECRET: z.string().min(32, 'JWT_REFRESH_SECRET doit faire au moins 32 caractères'),
     JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
     JWT_REFRESH_EXPIRES_IN: z.string().default('30d'),
+    ALLOWED_ORIGINS: z.string().optional(), // ✅ Ajouter (format : "https://domain1.com,https://domain2.com")
 });
 
 const parsed = envSchema.safeParse(process.env);

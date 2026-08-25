@@ -14,23 +14,22 @@ import {rateLimitMiddleware} from "./shared/middlewares/rate-limit-middleware.js
 import {cachingMiddleware} from "./shared/middlewares/caching-middleware.js";
 import cacheRoutes from "./features/cache/cache.routes.js";
 import {corsMiddleware} from "./shared/middlewares/cors-middleware.js";
-
 const app = new Hono()
 
+// Middlewares globaux
+app.use('*', corsMiddleware);
+app.use('*', errorHandler)
+app.use('*', rateLimitMiddleware);
+app.use('*', cachingMiddleware);
+app.use('*', loggingMiddleware);
+
 app.get('/health', (c) => {
-  return c.json({ status: 'ok', timestamp: new Date().toISOString() });
+    return c.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 app.get('/', (c) => {
-  return c.text('Facturly Backend API');
+    return c.text('Facturly Backend API');
 });
-
-// Middlewares globaux
-app.use('*', errorHandler)
-app.use('*', corsMiddleware);
-app.use('*', cachingMiddleware);
-app.use('*', loggingMiddleware);
-app.use('*', rateLimitMiddleware);
 
 app.route('/logs', logRoutes);
 app.route('/auth', authRoutes);

@@ -23,7 +23,7 @@ authRoutes.post(
             return sendSuccess(c, response, 201);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Erreur lors de l\'inscription de l\'admin';
-            return sendError(c, 'REGISTER_ADMIN_FAILED', message, 400);
+            return sendError(c, 'REGISTER_ADMIN_FAILED', message, 406);
         }
     }
 );
@@ -39,7 +39,7 @@ authRoutes.post(
             return sendSuccess(c, response, 201);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Erreur lors de l\'inscription de l\'utilisateur';
-            return sendError(c, 'REGISTER_USER_FAILED', message, 400);
+            return sendError(c, 'REGISTER_USER_FAILED', message, 406);
         }
     }
 );
@@ -55,7 +55,7 @@ authRoutes.post(
             return sendSuccess(c, response, 200);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Erreur lors de la connexion';
-            return sendError(c, 'LOGIN_FAILED', message, 401);
+            return sendError(c, 'LOGIN_FAILED', message, 406);
         }
     }
 );
@@ -71,7 +71,7 @@ authRoutes.post(
             return sendSuccess(c, response, 200);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Erreur lors du rafraîchissement';
-            return sendError(c, 'REFRESH_FAILED', message, 401);
+            return sendError(c, 'REFRESH_FAILED', message, 406);
         }
     }
 );
@@ -86,7 +86,7 @@ authRoutes.post(
             return sendSuccess(c, { message: 'Vous avez été déconnecté avec succès' }, 200);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Erreur lors de la déconnexion';
-            return sendError(c, 'LOGOUT_FAILED', message, 401);
+            return sendError(c, 'LOGOUT_FAILED', message, 406);
         }
     }
 );

@@ -13,6 +13,7 @@ import {errorHandler} from "./shared/middlewares/error-handler.js";
 import {rateLimitMiddleware} from "./shared/middlewares/rate-limit-middleware.js";
 import {cachingMiddleware} from "./shared/middlewares/caching-middleware.js";
 import cacheRoutes from "./features/cache/cache.routes.js";
+import {corsMiddleware} from "./shared/middlewares/cors-middleware.js";
 
 const app = new Hono()
 
@@ -26,6 +27,7 @@ app.get('/', (c) => {
 
 // Middlewares globaux
 app.use('*', errorHandler)
+app.use('*', corsMiddleware);
 app.use('*', cachingMiddleware);
 app.use('*', loggingMiddleware);
 app.use('*', rateLimitMiddleware);

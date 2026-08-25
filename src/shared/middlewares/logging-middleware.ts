@@ -1,5 +1,6 @@
 import { Context, type Next } from 'hono';
 import { Logger } from '../utils/logger.js';
+import {invalidateCache} from "../utils/cache-invalidator.js";
 
 // Mapper les actions selon la méthode HTTP et le path
 function getActionFromRequest(c: Context): { action: string; entityType?: string } {
@@ -95,5 +96,6 @@ export const loggingMiddleware = async (c: Context, next: Next) => {
             message: `${action} exécuté avec succès (${duration}ms)`,
             metadata: { duration, status },
         });
+        invalidateCache(action, entityType);
     }
 };

@@ -10,6 +10,9 @@ import userRoutes from "./features/users/user.routes.js";
 import logRoutes from "./features/logs/log.routes.js";
 import {loggingMiddleware} from "./shared/middlewares/logging-middleware.js";
 import {errorHandler} from "./shared/middlewares/error-handler.js";
+import {rateLimitMiddleware} from "./shared/middlewares/rate-limit-middleware.js";
+import {cachingMiddleware} from "./shared/middlewares/caching-middleware.js";
+import cacheRoutes from "./features/cache/cache.routes.js";
 
 const app = new Hono()
 
@@ -22,12 +25,15 @@ app.get('/', (c) => {
 });
 
 // Middlewares globaux
-app.use('*', errorHandler);
-app.use('*', loggingMiddleware); // ✅ Ajouter ici
+app.use('*', errorHandler)
+app.use('*', cachingMiddleware);
+app.use('*', loggingMiddleware);
+app.use('*', rateLimitMiddleware);
 
 app.route('/logs', logRoutes);
 app.route('/auth', authRoutes);
 app.route('/users', userRoutes);
+app.route('/cache', cacheRoutes);
 app.route('/invoices', invoiceRoutes);
 app.route('/subscriptions', subscriptionRoutes);
 app.route('/organizations', organizationRoutes);

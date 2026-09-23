@@ -6,8 +6,8 @@ const envSchema = z.object({
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     PORT: z.coerce.number().default(3000),
 
-    // Connexion Postgres (Supabase utilisé uniquement comme base de données)
-    DATABASE_URL: z.url(),
+    // Connexion Postgres (Neon)
+    NEON_DATABASE_URL: z.url(),
 
     // Secrets JWT — access token courte durée, refresh token longue durée
     JWT_ACCESS_SECRET: z.string().min(32, 'JWT_ACCESS_SECRET doit faire au moins 32 caractères'),

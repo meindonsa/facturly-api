@@ -1,7 +1,7 @@
 ## Context
 Facturly API: backend-only B2B invoicing SaaS API — no frontend in this repo.
 Stack: Node.js, Hono.js, Drizzle ORM (`postgres.js` driver), Zod v4, argon2 (argon2id), jose (JWT access + refresh).
-Database: Supabase used exclusively as a PostgreSQL host via direct TCP (Supavisor transaction pooler, port 6543, `postgres` superuser role) — no Supabase SDK, no PostgREST, RLS has no practical effect on this access path.
+Database: Neon used exclusively as a PostgreSQL host via pooled connection (`NEON_DATABASE_URL` with `sslmode=require`, PgBouncer transaction mode) — no Supabase SDK, no PostgREST.
 Module system: ESM, TypeScript with `NodeNext` resolution — relative imports use the `.js` extension even though source files are `.ts` (e.g. `import { db } from '../../config/db.js'`).
 
 ## Commands
@@ -10,7 +10,7 @@ Module system: ESM, TypeScript with `NodeNext` resolution — relative imports u
 - Build: `npm run build` (`tsc`)
 - Start (built): `npm run start`
 - Generate migration: `npm run db:generate`
-- Apply migration: `npm run db:migrate` — in practice, migrations are applied manually through the Supabase SQL Editor (direct TCP port 5432 is blocked from Boris's machine); don't assume `db:migrate` runs end-to-end.
+- Apply migration: `npm run db:migrate` reads `NEON_DATABASE_URL` (pooled, `sslmode=require`).
 - No linter and no automated test suite configured. To validate a task: `npm run build`, then exercise the endpoint manually with the `.http` files in `api-test/` (REST Client format).
 
 ## Architecture

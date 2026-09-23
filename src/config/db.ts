@@ -4,7 +4,7 @@ import { env } from './env.js';
 import * as schema from '../db/schema/index.js';
 
 // Client postgres.js : une seule connexion pool partagée dans toute l'app
-const client = postgres(env.DATABASE_URL, {
+const client = postgres(env.NEON_DATABASE_URL, {
     max: 10,
     idle_timeout: 20,
     connect_timeout: 10,

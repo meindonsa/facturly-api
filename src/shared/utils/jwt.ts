@@ -14,8 +14,16 @@ type RefreshTokenPayload = {
     refreshTokenId: string;
 };
 
+type ResetTokenPayload = {
+    userId: string;
+    email: string;
+    resetTokenId: string;
+    type: 'reset';
+};
+
 const accessKey = new TextEncoder().encode(env.JWT_ACCESS_SECRET);
 const refreshKey = new TextEncoder().encode(env.JWT_REFRESH_SECRET);
+const resetKey = new TextEncoder().encode(env.JWT_RESET_SECRET ?? env.JWT_REFRESH_SECRET);
 
 export const generateAccessToken = async (payload: AccessTokenPayload): Promise<string> => {
     return new SignJWT(payload)
@@ -46,6 +54,25 @@ export const verifyRefreshToken = async (token: string): Promise<RefreshTokenPay
     try {
         const verified = await jwtVerify(token, refreshKey);
         return verified.payload as RefreshTokenPayload;
+    } catch {
+        return null;
+    }
+};
+
+export const generateResetToken = async (payload: ResetTokenPayload): Promise<string> => {
+    return new SignJWT(payload)
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .setExpirationTime(env.JWT_RESET_EXPIRES_IN)
+        .sign(resetKey);
+};
+
+export const verifyResetToken = async (token: string): Promise<ResetTokenPayload | null> => {
+    try {
+        const verified = await jwtVerify(token, resetKey);
+        const p = verified.payload as ResetTokenPayload;
+        if (p.type !== 'reset') return null;
+        return p;
     } catch {
         return null;
     }

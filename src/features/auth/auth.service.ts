@@ -1,8 +1,16 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../../config/db.js';
-import { user, refreshToken } from '../../db/schema/index.js';
+import { user, refreshToken, passwordResetToken } from '../../db/schema/index.js';
 import { hashPassword, verifyPassword } from '../../shared/utils/password.js';
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../../shared/utils/jwt.js';
+import {
+    generateAccessToken,
+    generateRefreshToken,
+    verifyRefreshToken,
+    generateResetToken,
+    verifyResetToken,
+} from '../../shared/utils/jwt.js';
+import { env } from '../../config/env.js';
+import { getEmailService } from '../../shared/services/email.service.js';
 import type {
     AuthResponse,
     LoginRequest,
@@ -257,5 +265,102 @@ export class AuthService {
             .update(refreshToken)
             .set({ revokedAt: new Date() })
             .where(eq(refreshToken.id, refreshTokenId));
+    }
+
+    // Demande de réinitialisation — toujours 200 pour ne pas révéler l'existence de l'email (techwatch)
+    static async forgotPassword(email: string): Promise<void> {
+        const users = await db.select().from(user).where(eq(user.email, email)).limit(1);
+
+        if (users.length === 0) {
+            return;
+        }
+
+        const foundUser = users[0];
+
+        // Invalider les anciens tokens de reset
+        await db.delete(passwordResetToken).where(eq(passwordResetToken.userId, foundUser.id));
+
+        const resetTokenId = crypto.randomUUID();
+        const expiresAt = new Date();
+        expiresAt.setHours(expiresAt.getHours() + 1); // 1h comme JWT_RESET_EXPIRES_IN
+
+        const resetToken = await generateResetToken({
+            userId: foundUser.id,
+            email: foundUser.email,
+            resetTokenId,
+            type: 'reset',
+        });
+
+        const tokenHash = await hashPassword(resetToken);
+
+        await db.insert(passwordResetToken).values({
+            id: resetTokenId,
+            userId: foundUser.id,
+            tokenHash,
+            expiresAt,
+        });
+
+        // Envoi email via notisend (identique à techwatch), silencieux si non configuré
+        if (!env.FRONTEND_URL) {
+            console.error('FRONTEND_URL not configured, cannot send reset email');
+            return;
+        }
+
+        const resetLink = `${env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+        const emailService = getEmailService();
+        if (!emailService) {
+            console.warn('Mail service not configured, reset link generated but not sent:', resetLink);
+            return;
+        }
+
+        try {
+            await emailService.sendPasswordResetEmail(foundUser.email, resetLink);
+        } catch (e) {
+            console.error('Failed to send password reset email:', e);
+        }
+    }
+
+    static async resetPassword(token: string, newPassword: string): Promise<void> {
+        const payload = await verifyResetToken(token);
+        if (!payload) {
+            throw new Error('Lien invalide ou expiré');
+        }
+
+        const tokens = await db
+            .select()
+            .from(passwordResetToken)
+            .where(eq(passwordResetToken.id, payload.resetTokenId))
+            .limit(1);
+
+        if (tokens.length === 0) {
+            throw new Error('Lien invalide ou expiré');
+        }
+
+        const stored = tokens[0];
+
+        if (new Date() > stored.expiresAt) {
+            throw new Error('Lien invalide ou expiré');
+        }
+
+        // Vérifier que le hash correspond (argon2) — protection si DB leakée
+        const hashValid = await verifyPassword(token, stored.tokenHash);
+        if (!hashValid) {
+            throw new Error('Lien invalide ou expiré');
+        }
+
+        const users = await db.select().from(user).where(eq(user.id, payload.userId)).limit(1);
+
+        if (users.length === 0 || users[0].email !== payload.email) {
+            throw new Error('Lien invalide ou expiré');
+        }
+
+        const newHash = await hashPassword(newPassword);
+        await db.update(user).set({ passwordHash: newHash, updatedAt: new Date() }).where(eq(user.id, payload.userId));
+
+        // Invalider le token utilisé + tous les anciens
+        await db.delete(passwordResetToken).where(eq(passwordResetToken.id, payload.resetTokenId));
+
+        // Forcer reconnexion : révoquer tous les refresh tokens de l'utilisateur
+        await db.update(refreshToken).set({ revokedAt: new Date() }).where(eq(refreshToken.userId, payload.userId));
     }
 }

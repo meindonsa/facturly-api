@@ -5,7 +5,9 @@ import {
     registerAdminSchema,
     registerUserSchema,
     loginSchema,
-    refreshTokenSchema
+    refreshTokenSchema,
+    forgotPasswordSchema,
+    resetPasswordSchema,
 } from './auth.schema.js';
 import { sendSuccess, sendError } from '../../shared/utils/response.js';
 import {authGuard, type AuthPayload} from "../../shared/middlewares/auth-guard.js";
@@ -87,6 +89,38 @@ authRoutes.post(
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Erreur lors de la déconnexion';
             return sendError(c, 'LOGOUT_FAILED', message, 406);
+        }
+    }
+);
+
+// POST /auth/forgot-password — inspiré de techwatch (réponse 200 même si email inexistant)
+authRoutes.post(
+    '/forgot-password',
+    zValidator('json', forgotPasswordSchema),
+    async (c) => {
+        try {
+            const { email } = c.req.valid('json');
+            await AuthService.forgotPassword(email);
+            return sendSuccess(c, { message: 'Si un compte existe, un lien a été envoyé' }, 200);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Erreur lors de la demande';
+            return sendError(c, 'FORGOT_PASSWORD_FAILED', message, 406);
+        }
+    }
+);
+
+// POST /auth/reset-password — vérifie JWT + hash, invalide les refresh tokens
+authRoutes.post(
+    '/reset-password',
+    zValidator('json', resetPasswordSchema),
+    async (c) => {
+        try {
+            const { token, password } = c.req.valid('json');
+            await AuthService.resetPassword(token, password);
+            return sendSuccess(c, { message: 'Mot de passe mis à jour avec succès' }, 200);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Erreur lors de la réinitialisation';
+            return sendError(c, 'RESET_PASSWORD_FAILED', message, 406);
         }
     }
 );

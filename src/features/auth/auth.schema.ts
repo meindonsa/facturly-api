@@ -59,3 +59,16 @@ export const authResponseSchema = z.object({
 });
 
 export type AuthResponse = z.infer<typeof authResponseSchema>;
+
+export const forgotPasswordSchema = z.object({
+    email: z.email('Email invalide'),
+});
+
+export type ForgotPasswordRequest = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z.object({
+    token: z.string().min(1, 'Token requis'),
+    password: z.string().min(8, 'Le mot de passe doit faire au moins 8 caractères'),
+});
+
+export type ResetPasswordRequest = z.infer<typeof resetPasswordSchema>;

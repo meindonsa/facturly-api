@@ -300,13 +300,9 @@ export class AuthService {
             expiresAt,
         });
 
-        // Envoi email via notisend (identique à techwatch), silencieux si non configuré
-        if (!env.FRONTEND_URL) {
-            console.error('FRONTEND_URL not configured, cannot send reset email');
-            return;
-        }
+        const baseUrl = foundUser.role === 'ADMIN' ? env.BACKOFFICE_URL : env.FRONTEND_URL;
 
-        const resetLink = `${env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+        const resetLink = `${baseUrl}/reset-password?token=${resetToken}`;
         const emailService = getEmailService();
         if (!emailService) {
             console.warn('Mail service not configured, reset link generated but not sent:', resetLink);

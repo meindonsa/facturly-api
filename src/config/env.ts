@@ -16,10 +16,12 @@ const envSchema = z.object({
     JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
     JWT_REFRESH_EXPIRES_IN: z.string().default('30d'),
     JWT_RESET_EXPIRES_IN: z.string().default('1h'),
+    MAIL_APP: z.string().default('techwatch'),
     ALLOWED_ORIGINS: z.string().optional(), // ✅ Ajouter (format : "https://domain1.com,https://domain2.com")
 
     // Frontend pour lien reset
     FRONTEND_URL: z.url().optional(),
+    BACKOFFICE_URL: z.url().optional(),
 
     // Mail Service (notisend) — optionnel en dev/test
     MAIL_SERVICE_URL: z.url().optional(),

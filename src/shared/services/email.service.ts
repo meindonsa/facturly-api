@@ -6,6 +6,7 @@ type EmailServiceConfig = {
 };
 
 type SendEmailInput = {
+    app: string;
     to: string | string[];
     subject: string;
     templateType: 'simple' | 'welcome' | 'reset-password' | 'forgot-password' | 'otp';
@@ -42,6 +43,7 @@ export class EmailService {
 
     async sendPasswordResetEmail(email: string, resetLink: string): Promise<void> {
         await this.send({
+            app: env.MAIL_APP,
             to: email,
             subject: 'Réinitialisation de votre mot de passe — Facturly',
             templateType: 'forgot-password',

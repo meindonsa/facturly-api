@@ -72,7 +72,7 @@ organizationRoutes.patch(
             const payload = c.req.valid('json');
 
             // Vérifier que c'est un ADMIN ou le user de cette org
-            if (auth.role !== 'USER' || auth.organizationId !== orgId) {
+            if (auth.role !== 'ADMIN' && auth.organizationId !== orgId) {
                 return sendError(c, 'FORBIDDEN', 'Vous n\'avez pas accès à cette organisation', 403);
             }
 

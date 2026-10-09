@@ -1,8 +1,10 @@
 import { eq, or, ilike, count } from 'drizzle-orm';
 import { db, } from '../../config/db.js';
 import { organization } from '../../db/schema/index.js';
+import { cache } from '../../shared/utils/cache.js';
 import type {
     CreateOrganizationRequest,
+
     UpdateOrganizationInfoRequest,
     UpdateOrganizationStatusRequest,
     OrganizationResponse,
@@ -22,6 +24,7 @@ export class OrganizationService {
             })
             .returning();
 
+        cache.invalidate('/organizations');
         return this.mapToResponse(newOrg[0]);
     }
 
@@ -63,6 +66,7 @@ export class OrganizationService {
             throw new Error('L\'organisation n\'existe pas');
         }
 
+        cache.invalidate('/organizations');
         return this.mapToResponse(updated[0]);
     }
 
@@ -81,6 +85,7 @@ export class OrganizationService {
             throw new Error('L\'organisation n\'existe pas');
         }
 
+        cache.invalidate('/organizations');
         return this.mapToResponse(updated[0]);
     }
 
@@ -96,6 +101,7 @@ export class OrganizationService {
             throw new Error('L\'organisation n\'existe pas');
         }
 
+        cache.invalidate('/organizations');
         return this.mapToResponse(updated[0]);
     }
 
